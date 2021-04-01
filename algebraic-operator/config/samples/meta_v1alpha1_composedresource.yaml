@@ -1,0 +1,7 @@
+apiVersion: meta.fractallambda.com/v1alpha1
+kind: ComposedResource
+metadata:
+  name: composedresource-sample
+spec:
+  # Add fields here
+  foo: bar
