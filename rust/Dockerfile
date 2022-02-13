@@ -10,7 +10,7 @@ RUN apk add --update --no-cache make musl-dev
 COPY Cargo.toml ./
 COPY Cargo.lock ./
 COPY src/lib.rs src/lib.rs
-RUN cargo build --release --target x86_64-unknown-linux-musl
+RUN cargo build --lib --release --target x86_64-unknown-linux-musl
 RUN rm src/lib.rs
 
 
