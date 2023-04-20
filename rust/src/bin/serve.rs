@@ -1,3 +1,4 @@
+use std::future::Future;
 use clap::{Arg, Command};
 use tide::Request;
 use tide::prelude::*;
@@ -20,19 +21,32 @@ struct ServerOptions {
 }
 
 // Metric server options
-// struct MetricsOptions {
-//     port: u16
-// }
-
-
-async fn start_server(options: ServerOptions) -> tide::Result<()>{
-    println!("Starting server");
-    let mut server = tide::new();
-    server.at("/orders/shoes").post(order_shoes);
-    server.listen(format!("127.0.0.1:{}", options.port)).await?;
-    Ok(())
+struct MetricsOptions {
+    port: u16,
+    path: String,
 }
 
+struct State {}
+
+async fn start_server(options: ServerOptions){
+    println!("Starting Application server");
+    let mut server = tide::new();
+    server.at("/orders/shoes").post(order_shoes);
+    server.listen(format!("127.0.0.1:{}", options.port));
+}
+
+async fn start_metrics_server(options: MetricsOptions) -> tide::Server<()>{
+    println!("Starting Metrics server");
+    let mut server = tide::new();
+    server.at(options.path).get(handle_get_metrics);
+    server.listen(format!("127.0.0.1:{}", options.port));
+    return server;
+}
+
+
+async fn handle_get_metrics(mut req: Request<()>) -> tide::Result<()> {
+    Ok("")
+}
 
 lazy_static! {
     pub static ref REGISTRY: Registry = Registry::new();
