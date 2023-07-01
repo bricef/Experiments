@@ -1,0 +1,5 @@
+(prelude: :scheme/r7rs)
+(package: example)
+(depend: '(
+    github.com/drewc/ftw
+))
