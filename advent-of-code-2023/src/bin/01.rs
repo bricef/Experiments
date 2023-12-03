@@ -1,13 +1,8 @@
-use std::fs::read_to_string;
-use regex::Regex;
 
-fn read_lines(filename: &str) -> Vec<String> {
-    read_to_string(filename) 
-        .unwrap()  // panic on possible file-reading errors
-        .lines()  // split the string into an iterator of string slices
-        .map(String::from)  // make each slice into a string
-        .collect()  // gather them together into a vector
-}
+use regex::Regex;
+use aho_corasick::AhoCorasick;
+use advent_of_code_2023::libaoc::read_lines;
+
 
 // #[cfg(test)]
 // mod tests {
@@ -43,39 +38,80 @@ fn parse_value(s: &str) -> u32 {
     }
 }
 
-fn line_to_digits_including_words(line: &String) -> Vec<u32> {
-    println!("{}", line);
-    let re = Regex::new("([0-9]|one|two|three|four|five|six|seven|eight|nine)").unwrap();
+#[allow(dead_code)]
+fn line_to_digits_including_words_regex(line: &String) -> Vec<u32> {
+    let patterns= "[0-9]|one|two|three|four|five|six|seven|eight|nine";
+    let re = Regex::new(patterns).unwrap();
     let tokens = re.captures_iter(line);
     let digits :Vec<u32>= tokens
-        .map(|c| c.extract::<1>() )
-        .map(|(s,_)|s)
+        .map(|c| c.extract::<0>() )
+        .map(|(s, _)|s)
         .map(parse_value)
         .collect();
-    println!("{}", digits.iter().map(|x| x.to_string()).collect::<String>() );
     return digits;    
 }
 
+fn line_to_digits_including_words_aho_corasick(line: &String) -> Vec<u32> {
+    let patterns= [
+        "1","2","3","4","5","6","7","8","9",
+        "one","two","three","four","five","six","seven","eight","nine"];
+    let re = AhoCorasick::new(patterns).unwrap();
+    let digits: Vec<u32> = re
+        .find_overlapping_iter(line)
+        .map(|m| &line[m.start()..m.end()])
+        .map(parse_value)
+        .collect();
+    return digits;    
+}
+
+
 fn concatenate_of_first_and_last_digits(ds: Vec<u32>) -> u32 {
-    let first = ds.first().unwrap();
-    let v: u32;
-    if let Some(x) =  ds.last(){
-        v = 10*first + x;
-    }else{
-        v = 10*first+  first;
+    if let Some(first) = ds.first() {
+        let v: u32;
+        if let Some(x) =  ds.last(){
+            v = 10*first + x;
+        }else{
+            v = 10*first+  first;
+        }
+        return v;
     }
-    println!("{}",v);
-    return v;
+    return 0;
+    
+}
+
+#[allow(dead_code)]
+fn debug_output(f: fn(&String)->Vec<u32>) -> impl Fn(&String) -> Vec<u32>{
+    let inf = move |s:&String| {
+        println!("input: {}", s);
+        
+        let r =  f(s);
+        println!("digits: {}", r.iter().map(|x| x.to_string()).collect::<String>() );
+        return r;
+    };
+    return inf;
+}
+
+#[allow(dead_code)]
+fn printer(t: u32) -> u32 {
+    println!("{}", t);
+    return t;
 }
 
 fn main() {
     println!("Advent of code day 01");
-    let lines = read_lines("files/01-example-2.txt");
+    let lines = read_lines("files/01-input.txt");
     
-    let total_simple = lines.iter().map(line_to_digits).map(concatenate_of_first_and_last_digits).reduce(|acc, e| acc+e).unwrap();
+    let total_simple = lines.iter()
+        .map(line_to_digits)
+        .map(concatenate_of_first_and_last_digits)
+        .reduce(|acc, e| acc+e).unwrap();
     println!("digits only: {}", total_simple);
 
-    let total_complex: u32 = lines.iter().map(line_to_digits_including_words).map(concatenate_of_first_and_last_digits).reduce(|acc, e| acc+e).unwrap();
+    let total_complex: u32 = lines.iter()
+        .map(line_to_digits_including_words_aho_corasick)
+            .map(concatenate_of_first_and_last_digits)
+            // .map(printer)
+            .reduce(|acc, e| acc+e).unwrap();
     println!("digits and words: {}", total_complex);
 
 }
