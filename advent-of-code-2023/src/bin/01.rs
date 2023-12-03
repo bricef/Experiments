@@ -44,7 +44,7 @@ fn parse_value(s: &str) -> u32 {
 }
 
 fn line_to_digits_including_words(line: &String) -> Vec<u32> {
-    // println!("{}", line);
+    println!("{}", line);
     let re = Regex::new("([0-9]|one|two|three|four|five|six|seven|eight|nine)").unwrap();
     let tokens = re.captures_iter(line);
     let digits :Vec<u32>= tokens
@@ -52,22 +52,25 @@ fn line_to_digits_including_words(line: &String) -> Vec<u32> {
         .map(|(s,_)|s)
         .map(parse_value)
         .collect();
-    // println!("{}", digits.iter().map(|x| x.to_string()).collect::<String>() );
+    println!("{}", digits.iter().map(|x| x.to_string()).collect::<String>() );
     return digits;    
 }
 
 fn concatenate_of_first_and_last_digits(ds: Vec<u32>) -> u32 {
     let first = ds.first().unwrap();
+    let v: u32;
     if let Some(x) =  ds.last(){
-        return 10*first + x;
+        v = 10*first + x;
     }else{
-        return 10*first+  first;
+        v = 10*first+  first;
     }
+    println!("{}",v);
+    return v;
 }
 
 fn main() {
     println!("Advent of code day 01");
-    let lines = read_lines("files/01-input-1.txt");
+    let lines = read_lines("files/01-example-2.txt");
     
     let total_simple = lines.iter().map(line_to_digits).map(concatenate_of_first_and_last_digits).reduce(|acc, e| acc+e).unwrap();
     println!("digits only: {}", total_simple);
