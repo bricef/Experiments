@@ -39,7 +39,7 @@ fn parse_turns(rounds_str: &str) -> Vec<Turn> {
 
 fn line_to_game(line:&String) -> Game {
     // >Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
-    println!("{}", line);
+    // println!("{}", line);
     //Quick and (very) dirty parsing...
     let l: Vec<_>= line.split(":").collect();
     let game_str = l[0];
@@ -70,13 +70,11 @@ fn merge_with_operator<K:std::cmp::Eq+std::hash::Hash+std::clone::Clone,V:std::m
 
 }
 
-fn max_required(turns: Vec<Turn>) -> Constraint{
+fn max_required(turns: &Vec<Turn>) -> Constraint {
     let con: Constraint = turns.iter()
-        .fold(HashMap::from([]), |acc, t| 
-            merge_with_operator(cmp::max, &acc, t));
+        .fold(HashMap::from([]), |acc, t| merge_with_operator(cmp::max, &acc, t));
     return con
 }
-
 
 fn turn_possible_given_constraint(constraint: &Constraint, turn: &Turn) -> bool{
     let possible: bool = turn.iter()
@@ -87,17 +85,17 @@ fn turn_possible_given_constraint(constraint: &Constraint, turn: &Turn) -> bool{
 
 fn game_possible_given_constraint(constraint: &HashMap<String, u32>, game: &Game) -> bool {
     //for every turn in a game, is the value higher than the constriant?
-    println!("GAME {:?}", game);
-    println!("CONSTRAINT {:?}", constraint);
+    // println!("GAME {:?}", game);
+    // println!("CONSTRAINT {:?}", constraint);
     let valid_games:bool= game.turns.iter()
         .all(|t| turn_possible_given_constraint(&constraint, t));
-    println!("GAME VALID? {}\n", valid_games);
+    // println!("GAME VALID? {}\n", valid_games);
         
     return valid_games
 }
 
 fn main(){
-    println!("## Advent of code day 02");
+    println!("# Advent of code day 02\n");
     
     let lines = read_lines("files/02-input.txt");
 
@@ -107,14 +105,33 @@ fn main(){
         ("blue".to_string(), 14)
     ]);
 
-    println!("CONSTRAINT: {:?}", constraints);
-    let valid_games:Vec<_> = lines.iter()
-        .map(line_to_game)
+    let games: Vec<Game> = lines.iter().map(line_to_game).collect();
+
+    
+    let valid_games:Vec<_> = games.iter()
         .filter(|g| game_possible_given_constraint(&constraints, g))
         .collect();
     // println!("VALID GAMES: {:?}", valid_games);
     let sum_indices = valid_games.iter().fold(0, |acc, g| acc + g.index);
-    println!("SUM OF INDICES FOR VALID GAMES: {}", sum_indices);
+    println!("## Part 1");
+    println!("Constraint: {:?}", constraints);
+    println!("Sum of indices for valid games: {}", sum_indices);
+
+    // let minimum_constraints = games.iter().map(|g| max_required(&g.turns));
+    let mut tot = 0;
+    for game in games.iter() {
+        let constraint = max_required(&game.turns);
+        // println!("GAME {:?}", game);
+        // println!("REQUIRES {:?}\n", constraint);
+        if let (Some(red), Some(green), Some(blue)) = (constraint.get("red"), constraint.get("green"), constraint.get("blue")){
+            tot += red*green*blue;
+        };
+    }
+    println!("");
+    println!("## Part 2");
+    println!("Game constraints power sum = {}", tot);
+    println!("Done. {} games analyzed.", games.len());
+
 
 
 
