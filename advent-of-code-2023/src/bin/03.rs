@@ -1,6 +1,6 @@
 
 use advent_of_code_2023::libaoc::read_lines;
-use regex::{Regex, Match};
+use regex::Regex;
 
 fn scan_line_for_symbol(lines: &Vec<String>, line_index: usize, start: usize, end: usize) -> bool {
     if let Some(line) = &lines.get(line_index){
@@ -58,7 +58,55 @@ fn scan_for_serial_numbers(lines: &Vec<String>) -> Vec<SerialNumber> {
     return xs;
 }
 
+struct Gear {
+    first : u32,
+    second: u32
+}
 
+impl Gear {
+    fn ratio(&self) -> u32 {
+        return self.first * self.second;
+    }
+}
+
+fn scan_for_pivots(lines: &Vec<String>) -> Vec<(u32, u32)> {
+    let mut pivots : Vec<(u32, u32)> = Vec::new();
+    for (lindex, line) in lines.iter().enumerate(){
+        for (cindex, c) in line.chars().enumerate(){
+            if c == '*' {
+                pivots.push((lindex as u32, cindex as u32));
+            }
+        }
+    }
+    return pivots;
+}
+
+type Entity = SerialNumber;
+
+struct Grid {
+
+}
+impl Grid {
+    fn from_lines(lines: &Vec<String>) -> Grid {}
+    fn get_entity(&self, x:u32,y:u32) -> Option<Entity>{}
+    fn get_entities(&self, start:(u32, u32), end: (u32,u32)) -> impl Iterator<Item = Entity>{}
+}
+
+fn scan_for_gears(lines: &Vec<String>) -> Vec<Gear>{ 
+    let mut gears : Vec<Gear>;
+    let grid : Grid = Grid::from_lines(lines);
+
+    let pivots = scan_for_pivots(lines);
+    
+    for pivot in pivots.iter(){
+        let entities : Vec<SerialNumber> = grid.get_entities((pivot.0, pivot.1), (pivot.0, pivot.1)).collect();
+        if entities.len() >= 2 {
+            gears.push(Gear { first: entities[0].number, second: entities[1].number })
+        }
+    }
+
+    return gears
+}
 
 
 fn main(){ 
@@ -78,11 +126,11 @@ fn main(){
     let total : u32 = numbers.iter().map(|sn| sn.number ).sum();
     println!("Input Total:{}", total);
 
-    // println!("## Part 2");
-    // let expected_output_gears = 467835;
-    // let gears = scan_for_gears(&example_input);
-    // let example_total_ratios : u32 = gears.iter().map(|g| g.ratio()).sum();
-    // println!("Example sum of ratios: {} (should be {})", example_total_ratios, expected_output_gears);
+    println!("## Part 2");
+    let expected_output_gears = 467835;
+    let gears = scan_for_gears(&example_input);
+    let example_total_ratios : u32 = gears.iter().map(|g| g.ratio()).sum();
+    println!("Example sum of ratios: {} (should be {})", example_total_ratios, expected_output_gears);
 
 
 
