@@ -1,4 +1,3 @@
-use std::collections::btree_set;
 
 use itertools::Itertools;
 
@@ -30,6 +29,7 @@ const INPUT_RACES: [Race; 4] = [
     Race::from(66,1044)
 ];
 
+#[allow(dead_code)]
 #[derive(Debug)]
 struct RaceSolution {
     accelerate_time: u64,

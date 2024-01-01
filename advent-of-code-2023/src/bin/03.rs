@@ -33,8 +33,6 @@ struct SerialNumber {
     number: u32
 }
 
-
-
 impl Debug for SerialNumber {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "|{}|", &self.number)
