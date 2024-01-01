@@ -1,7 +1,5 @@
 use std::{fs::read_to_string, collections::HashMap, u64::MAX};
 
-use itertools::Chunk;
-
 #[derive(Debug, Clone)]
 struct Mapping {
     out_start: u64,
