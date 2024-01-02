@@ -4,10 +4,6 @@ use std::collections::HashSet;
 
 use advent_of_code_2023::libaoc::read_lines;
 
-
-
-
-
 #[derive(Debug)]
 struct Card {
     // id: u32,

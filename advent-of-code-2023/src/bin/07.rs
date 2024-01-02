@@ -44,10 +44,6 @@ full house, but 77888 is stronger because its third card is stronger (and
 both hands have the same first and second card).
 */
 
-enum Hand {
-    CamelHand,
-    JokerHand
-}
 
 #[derive(Debug)]
 struct CamelHand {
