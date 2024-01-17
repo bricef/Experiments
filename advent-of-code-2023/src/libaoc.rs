@@ -21,10 +21,10 @@ pub struct TextGrid<T> {
 
 #[derive(Clone)]
 pub struct GridCell<T>{
-    line: usize,
-    offset: usize,
-    value: char,
-    entity: Option<Rc<T>>
+    pub line: usize,
+    pub offset: usize,
+    pub value: char,
+    pub entity: Option<Rc<T>>
 }
 
 impl<T> fmt::Debug for GridCell<T> where T: Debug {
@@ -98,6 +98,13 @@ impl<'a, T> TextGrid <T>
                 let _entity = scanner(self, &gc);
             }
         }
+    }
+
+    pub fn get_cell(&self, coord: (usize, usize)) -> Option<&GridCell<T>>{
+        let (line,offset) = coord;
+        if line > self.cells.len()-1 { return None }
+        if offset > self.cells[line].len()-1 { return None }
+        Some(&self.cells[line][offset])
     }
 
     pub fn get_cells(&self, start:(usize, usize), end: (usize,usize)) -> Vec<&GridCell<T>> {
