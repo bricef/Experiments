@@ -4,6 +4,7 @@ Random code experiements and half-finished ideas. Consider all code in this repo
 
 ## Experiments
 
+- [Sound wave visualiser using Python/Pillow](./sound-visualiser/)
 - [Logo generation using PIL/Pillow](./pil-logo/)
 - [Typed Data Language](./typed-data-language/)
 - [Gerbil Scheme build container](./gerbil-scheme/)
