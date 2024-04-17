@@ -1,4 +1,6 @@
-Project Origin
-==============
+# Python PIL logo generator
 
-Support IPDL fleet remote working, esp. media assets. Front end should be origin-frontend and backend as origin-backend.
+A simple Python scriupt to generate a logo/flag.
+
+![](./try.png)
+
