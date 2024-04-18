@@ -9,6 +9,7 @@ Random code experiements and half-finished ideas. Consider all code in this repo
 - [Typed Data Language](./typed-data-language/)
 - [Gerbil Scheme build container](./gerbil-scheme/)
 - [Universal Paperclip helper](./paperclips/)
+- [SterileJS - functional JS utility wrappers](./sterile.js/)
 - [Rust Experiments](./rust/)
 - [Composable Data Types to the Kubernetes API](./algebraic-operator/)
 - [Graph view web experiment with D3](./web-graph/)
