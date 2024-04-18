@@ -4,7 +4,7 @@
 
 Visualise a `.wav` file as a waveform.
 
-![Visualised sound wave](./message.png)
+![Visualised sound wave](./out.png)
 
 ## How to use
 
