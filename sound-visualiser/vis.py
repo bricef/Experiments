@@ -26,7 +26,7 @@ def chunk_avg(col, numchunks):
 
 def to_img(samples, width, height, bg, fg, scale=1.0, padding=0, minheight=1):
     boxwidth = width//len(samples)
-    print(f"width: {width}, boxwidth: {boxwidth}, samples: {len(samples)}, sampelspace: {boxwidth*len(samples)}")
+    print(f"width: {width}, boxwidth: {boxwidth}, samples: {len(samples)}, samplespace: {boxwidth*len(samples)}")
     barwidth = boxwidth-padding
     img = Image.new('RGBA', (width, height), bg)
     d = ImageDraw.Draw(img)
