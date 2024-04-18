@@ -14,4 +14,5 @@ Random code experiements and half-finished ideas. Consider all code in this repo
 - [Composable Data Types to the Kubernetes API](./algebraic-operator/)
 - [Graph view web experiment with D3](./web-graph/)
 - [C vs C++ Hashtables](./c-vs-cpp/)
+- [Futures in plain C](./libfutures/)
 
