@@ -12,3 +12,5 @@ Random code experiements and half-finished ideas. Consider all code in this repo
 - [Rust Experiments](./rust/)
 - [Composable Data Types to the Kubernetes API](./algebraic-operator/)
 - [Graph view web experiment with D3](./web-graph/)
+- [C vs C++ Hashtables](./c-vs-cpp/)
+
