@@ -4,19 +4,26 @@
 from weasyprint import HTML, CSS
 from weasyprint.text.fonts import FontConfiguration
 
-font_config = FontConfiguration()
+import typer
 
-html = HTML(string='<h1>The title</h1>')
+def main (name: str):
+    
+    font_config = FontConfiguration()
 
-css = CSS(string='''
-    @font-face {
-        font-family: Gentium;
-        src: url(https://example.com/fonts/Gentium.otf);
-    }
-    h1 { font-family: Gentium }''', 
-    font_config=font_config
-)
+    html = HTML(string='<h1>The title</h1>')
 
-document = html.render(stylesheets=[css], font_config=font_config)
+    css = CSS(string='''
+        @font-face {
+            font-family: Gentium;
+            src: url(https://example.com/fonts/Gentium.otf);
+        }
+        h1 { font-family: Gentium }''', 
+        font_config=font_config
+    )
 
-pdfstream = document.write_pdf()
+    document = html.render(stylesheets=[css], font_config=font_config)
+
+    pdfstream = document.write_pdf()
+
+if __name__ == "__main__":
+    typer.run(main)
