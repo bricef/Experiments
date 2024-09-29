@@ -1,0 +1,50 @@
+strict graph {
+    Driveway -- "Main Entrance"
+    Garage -- Workshop
+    Workshop -- Driveway
+    Garage -- Driveway
+    "Main Entrance" -- "Hall"
+    "Hall" -- Coatroom
+    Hall -- "Guest Toilet"
+    Hall -- "Reception Room"
+    Hall -- "Dining Room"
+    "Reception Room" -- "Dining Room"
+    "Dining Room" -- Kitchen
+    Kitchen -- "Breakfast Room"
+    Hall -- "Dining Room"
+    Kitchen -- Pantry
+    Kitchen -- "Utility Room"
+    "Utility Room" -- Garage
+    Kitchen -- "Hallway"
+    "Hallway" -- Lounge
+    Hall -- "Hallway"
+    Office -- Hall
+    // Office -- "Hallway"
+    "Utility Room" -- Driveway
+    "Hallway" -- "Gaming Room"
+    "Hallway" -- Library
+    "Hallway" -- Stairs
+    Stairs -- Landing
+    Garden -- "Breakfast Room"
+    Garden -- "Utility Room"
+    Garden -- "Annexe Entrance"
+    Driveway -- "Annexe Entrance"
+    Kitchen -- Garden
+    Landing -- Bathroom
+    Landing -- "Guest Room"
+    "Guest Room" -- "Bathroom 2"
+    Landing -- "Master Bedroom"
+    "Master Bedroom" -- "Dressing Room"
+    "Dressing Room" -- "Master Bathroom"
+    "Hallway" -- "Play Room" -- Garden
+    Landing -- "Room 1"
+    Landing -- "Room 2"
+    Landing -- "Room 3"
+    "Garden Room" -- Garden
+    "Utility Room" -- "Downstairs Bathroom"
+    Gym -- Garage
+    Office -- Library
+    Pantry -- Cellar
+    Cellar -- Driveway
+    Hallway -- Cellar
+}
