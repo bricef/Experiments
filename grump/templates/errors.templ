@@ -1,5 +1,7 @@
-package main
+package templates
 
-templ errorPage(code int) {
-	<div>Error {code.String()}</div>
+import "strconv"
+
+templ ErrorPage(code int) {
+	<div>Error { strconv.Itoa(code) }</div>
 }

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/a-h/templ"
+	"github.com/bricef/grump/templates"
 	"github.com/labstack/echo/v4"
 )
 
@@ -30,7 +31,7 @@ func customHTTPErrorHandler(err error, ctx echo.Context) {
 		code = he.Code
 	}
 
-	r := errorPage(code)
+	r := templates.ErrorPage(code)
 	render(ctx, code, r)
 }
 

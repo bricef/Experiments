@@ -1,8 +1,7 @@
-package main
+package templates
 
 import "time"
 
-templ timeComponent(d time.Time) {
+templ TimeComponent(d time.Time) {
 	<div>{ d.String() }</div>
 }
-
