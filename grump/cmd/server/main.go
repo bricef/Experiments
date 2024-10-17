@@ -2,12 +2,14 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"time"
 
-	"github.com/bricef/grump/internal/rendering"
+	"github.com/bricef/grump/rendering"
+	"github.com/rs/zerolog"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type LoginPage struct {
@@ -25,18 +27,30 @@ type DateInfo struct {
 	Date time.Time
 }
 
-var CACHE_TEMPLATE = false
-
 func main() {
 
 	e := echo.New()
 
-	e.Logger.SetLevel(log.DEBUG)
+	logger := zerolog.New(os.Stdout)
+	e.Use(middleware.Recover())
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogURI:    true,
+		LogStatus: true,
+		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			logger.Info().
+				Str("URI", v.URI).
+				Int("status", v.Status).
+				Msg("request")
+
+			return nil
+		},
+	}))
 
 	e.Renderer = rendering.NewMustacheRenderer(rendering.MustacheRendererConfig{
-		caching:           false,
-		root_directory:    "./templates/",
-		layouts_directory: "layouts/",
+		Caching:       false,
+		Root:          "./templates/",
+		Layouts:       "layouts/",
+		DefaultLayout: "default",
 	})
 
 	e.HTTPErrorHandler = func(err error, ctx echo.Context) {
