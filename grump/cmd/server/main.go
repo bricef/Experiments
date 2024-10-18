@@ -46,12 +46,16 @@ func main() {
 		},
 	}))
 
-	e.Renderer = rendering.NewMustacheRenderer(rendering.MustacheRendererConfig{
+	mustache := rendering.NewMustacheRenderer(rendering.MustacheRendererConfig{
 		Caching:       false,
 		Root:          "./templates/",
 		Layouts:       "layouts/",
 		DefaultLayout: "default",
 	})
+
+	e.Renderer = rendering.NewMetaRenderer().
+		Register([]string{".mustache", ".html"}, mustache).
+		Fallback(mustache)
 
 	e.HTTPErrorHandler = func(err error, ctx echo.Context) {
 		code := http.StatusInternalServerError
