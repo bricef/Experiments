@@ -53,8 +53,12 @@ func main() {
 		DefaultLayout: "default",
 	})
 
+	markdown := rendering.NewMarkdownRenderer()
+
 	e.Renderer = rendering.NewMetaRenderer().
+		Root("./templates").
 		Register([]string{".mustache", ".html"}, mustache).
+		Register([]string{".md"}, markdown).
 		Fallback(mustache)
 
 	e.HTTPErrorHandler = func(err error, ctx echo.Context) {
@@ -80,6 +84,9 @@ func main() {
 	})
 	e.GET("/date", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "partials/date", &DateInfo{time.Now()})
+	})
+	e.GET("/md", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "templates/simple.md", nil)
 	})
 
 	e.Logger.Fatal(e.Start(":1323"))

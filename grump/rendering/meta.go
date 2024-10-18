@@ -9,12 +9,14 @@ import (
 )
 
 type MetaRenderer struct {
+	root     string
 	dispatch map[string]echo.Renderer
 	fallback echo.Renderer
 }
 
 func NewMetaRenderer() *MetaRenderer {
 	return &MetaRenderer{
+		root:     "./",
 		dispatch: make(map[string]echo.Renderer),
 		fallback: nil,
 	}
@@ -26,8 +28,14 @@ func (m *MetaRenderer) Register(extensions []string, r echo.Renderer) *MetaRende
 	}
 	return m
 }
+
 func (m *MetaRenderer) Fallback(r echo.Renderer) *MetaRenderer {
 	m.fallback = r
+	return m
+}
+
+func (m *MetaRenderer) Root(path string) *MetaRenderer {
+	m.root = path
 	return m
 }
 
