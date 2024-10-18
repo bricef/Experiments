@@ -48,11 +48,9 @@ func main() {
 
 	mustache := rendering.NewMustacheRenderer(rendering.MustacheRendererConfig{
 		Caching:       false,
-		Root:          "./templates/",
-		Layouts:       "layouts/",
+		Layouts:       "templates/layouts/",
 		DefaultLayout: "default",
 	})
-
 	markdown := rendering.NewMarkdownRenderer()
 
 	e.Renderer = rendering.NewMetaRenderer().
@@ -63,11 +61,11 @@ func main() {
 
 	e.HTTPErrorHandler = func(err error, ctx echo.Context) {
 		code := http.StatusInternalServerError
-
 		if he, ok := err.(*echo.HTTPError); ok {
 			code = he.Code
 			ctx.Render(code, "pages/error", he)
 		} else {
+			e.Logger.Error(err)
 			ctx.Render(code, "pages/error", ErrorInfo{Code: http.StatusInternalServerError, Message: "Server encountered an internal error"})
 		}
 	}
@@ -86,7 +84,7 @@ func main() {
 		return c.Render(http.StatusOK, "partials/date", &DateInfo{time.Now()})
 	})
 	e.GET("/md", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "templates/simple.md", nil)
+		return c.Render(http.StatusOK, "simple.md", nil)
 	})
 
 	e.Logger.Fatal(e.Start(":1323"))

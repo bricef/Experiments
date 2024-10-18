@@ -53,10 +53,11 @@ func (m *MetaRenderer) GetRendererFor(name string) (echo.Renderer, error) {
 }
 
 func (m *MetaRenderer) Render(w io.Writer, name string, data interface{}, ctx echo.Context) error {
+	fullname := filepath.Join(m.root, name)
 	ir, err := m.GetRendererFor(name)
 	if err != nil {
 		return err
 	}
 
-	return ir.Render(w, name, data, ctx)
+	return ir.Render(w, fullname, data, ctx)
 }
