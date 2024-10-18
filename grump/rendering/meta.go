@@ -8,6 +8,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type GrumpRenderer interface {
+	Render(w io.Writer, name string, data interface{}, ctx echo.Context) error
+	Transform(string) (string, error)
+}
+
 type MetaRenderer struct {
 	root     string
 	dispatch map[string]echo.Renderer
