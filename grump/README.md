@@ -19,3 +19,6 @@ $ go run cmd/server/main.go
 - [ ] set up ORM with https://gorm.io/docs/
 - [ ] enable prometheus / opentelemetry metrics
 - [ ] Look into https://gorilla.github.io
+
+
+- Implement in Rust instead? using https://github.com/ntex-rs/ntex and https://docs.rs/markdown/1.0.0-alpha.21/markdown/struct.ParseOptions.html
