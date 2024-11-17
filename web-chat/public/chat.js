@@ -26,7 +26,47 @@ function setupSocketHandlers(socket){
 }
 
 
-let nick = "Anon"
+
+
+function setupMessageForm(socket){
+  let form = document.getElementById('messagesend');
+  let message = document.getElementById('message');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    // console.log(`Sending message ${message.value}`);
+    socket.send(JSON.stringify({nick: nick, content: message.value}));
+    message.value = '';
+  });
+}
+
+function choose(arr){
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+var namedata = {
+  animals: ["lion", "bear", "octopus", "goose"],
+  adjectives: ["bright", "wise", "silly"]
+};
+
+// Udate namedata when possible
+fetch("http://localhost:1323/namedata.json")
+    .then((e) => e.json())
+    .then((nd) => {
+      namedata = nd;
+    })
+
+function capitalizeFirstLetter(val) {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
+function randomName(namedata){
+  let animal = capitalizeFirstLetter(choose(namedata.animals));
+  let adjective = capitalizeFirstLetter(choose(namedata.adjectives));
+  let number = Math.floor(Math.random() * 99);
+  return adjective + animal + number;
+}
+
+let nick = randomName(namedata);
 
 function setNick(newNick){
   if (newNick === "") {
@@ -40,26 +80,26 @@ function setupNick(nick){
   nickfield = document.getElementById('nick')
   nickfield.addEventListener('input', (e) => {
     setNick(e.target.value);
-    console.log(`New name ${nick}`);
   });
   nickfield.placeholder = nick;
 }
 
-function setupMessageForm(socket){
-  let form = document.getElementById('messagesend');
-  let message = document.getElementById('message');
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    console.log(`Sending message ${message.value}`);
-    socket.send(JSON.stringify({nick: nick, content: message.value}));
-    message.value = '';
+function setupRandomiseButton() {
+  let button = document.getElementById('randomise');
+  button.addEventListener('click', (e) => {
+    let nick = randomName(namedata); 
+    setNick(nick);
+    nickfield = document.getElementById('nick')
+    nickfield.value = nick;
+    nickfield.placeholder = nick;
   });
 }
 
 window.addEventListener("DOMContentLoaded", (event) => {
   let socket = new WebSocket("ws://localhost:1323/chatroom");
-  setupNick("Anon");
+  
+  setupNick(nick);
   setupSocketHandlers(socket);
   setupMessageForm(socket);
-
+  setupRandomiseButton();
 });
