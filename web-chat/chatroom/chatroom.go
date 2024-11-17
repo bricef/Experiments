@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gorilla/websocket"
+	"github.com/sym01/htmlsanitizer"
 )
 
 type Message struct {
@@ -31,6 +32,21 @@ type Dispatcher struct {
 	in      chan Message
 }
 
+func sanitiseMessage(msg Message) (Message, error) {
+	content, err := htmlsanitizer.SanitizeString(msg.Content)
+	if err != nil {
+		return Message{}, err
+	}
+	nick, err := htmlsanitizer.SanitizeString(msg.Nick)
+	if err != nil {
+		return Message{}, err
+	}
+	return Message{
+		Content: content,
+		Nick:    nick,
+	}, nil
+}
+
 func NewDispatcher() *Dispatcher {
 	d := &Dispatcher{
 		clients: make(map[*Client]bool),
@@ -40,7 +56,12 @@ func NewDispatcher() *Dispatcher {
 		for {
 			msg := <-d.in
 			fmt.Printf("Received message: %v\n", msg)
-			d.SendAll(msg)
+			sanitisedMessage, err := sanitiseMessage(msg)
+			if err != nil {
+				fmt.Printf("Error sanitising message: %v\n", err)
+				continue
+			}
+			d.SendAll(sanitisedMessage)
 		}
 	}()
 	return d
