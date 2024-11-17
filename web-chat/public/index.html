@@ -5,19 +5,9 @@
   <meta charset="utf-8">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
   <link rel="stylesheet" href="/custom.css">
-  <script src="https://hyperscript.org/js/_hyperscript_w9y.min.js"></script>
+  <!-- <script src="https://hyperscript.org/js/_hyperscript_w9y.min.js"></script> -->
   <script src="/chat.js"></script>
   <title>Chat Example</title>
-  <script type="text/hyperscript">
-    init
-      set $nick to 'Anon' then
-      put $nick into #nick.placeholder
-    end
-  </script>
-
-  <script>
-   
-  </script>
 </head>
 
 
@@ -30,12 +20,12 @@
       </ul>
       <ul>
         <li>
-          <form _="on submit halt the event then set $nick to #nick.value then log `New name ${$nick}`" >
+          
             <fieldset role="group">
               <input type="submit" value="Nick is" />
               <input type="text" name="nick" id="nick" placeholder="">
             </fieldset>
-          </form>
+          
         </li>
       </ul>
     </nav>
@@ -48,10 +38,7 @@
         </div>
         
         <footer>
-          <form _="on submit halt the event 
-                  then log `Sending message ${#message.value}`
-                  then send x(nick: $nick, content: #message.value) to MySocket 
-                  then put '' into #message.value">
+          <form id="messagesend">
             <fieldset role="group">
               <input type="text" name="message" id="message" placeholder="message">
               <input type="submit" value="Send" />

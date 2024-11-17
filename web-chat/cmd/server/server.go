@@ -1,7 +1,7 @@
 package main
 
 import (
-	"time"
+	"fmt"
 
 	"github.com/gorilla/sessions"
 	"github.com/gorilla/websocket"
@@ -42,10 +42,12 @@ type Dispatcher struct {
 func newDispatcher() *Dispatcher {
 	d := &Dispatcher{
 		clients: make(map[*Client]bool),
+		in:      make(chan Message),
 	}
 	go func() {
 		for {
 			msg := <-d.in
+			fmt.Printf("Received message: %v\n", msg)
 			d.sendAll(msg)
 		}
 	}()
@@ -58,8 +60,9 @@ func (d *Dispatcher) addClient(c *Client) error {
 	go func() {
 		for {
 			msg := Message{}
-			err := c.Conn.ReadJSON(msg)
+			err := c.Conn.ReadJSON(&msg)
 			if err != nil {
+				fmt.Printf("Error reading message: %v\n", err)
 				d.removeClient(c)
 				break
 			}
@@ -70,13 +73,17 @@ func (d *Dispatcher) addClient(c *Client) error {
 }
 
 func (d *Dispatcher) removeClient(c *Client) {
-	c.Conn.Close()
+	_ = c.Conn.Close()
 	delete(d.clients, c)
 }
 
 func (d *Dispatcher) sendAll(data Message) {
 	for c := range d.clients {
-		c.send(data)
+		err := c.send(data)
+		if err != nil {
+			fmt.Printf("Error sending message: %v\n", err)
+			d.removeClient(c)
+		}
 	}
 }
 
@@ -100,15 +107,15 @@ func main() {
 		return dispatcher.addClient(NewClient(ws))
 	})
 
-	go func() {
-		for {
-			time.Sleep(3 * time.Second)
-			dispatcher.sendAll(Message{
-				Content: time.Now().Format(time.RFC3339),
-				Nick:    "Server",
-			})
-		}
-	}()
+	// go func() {
+	// 	for {
+	// 		time.Sleep(3 * time.Second)
+	// 		dispatcher.sendAll(Message{
+	// 			Content: time.Now().Format(time.RFC3339),
+	// 			Nick:    "Server",
+	// 		})
+	// 	}
+	// }()
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
