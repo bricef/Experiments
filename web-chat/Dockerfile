@@ -4,9 +4,9 @@ WORKDIR /go/src/app
 COPY . .
 
 RUN go mod download
-RUN CGO_ENABLED=0 go build -o web-chat ./cmd/server/server.go
+RUN CGO_ENABLED=0 go build -o chat ./cmd/server/server.go
 
 # Now copy it into our base image.
 FROM gcr.io/distroless/static-debian12
 COPY --from=build /go/src/app/web-chat /web-chat
-CMD ["/web-chat"]
+CMD ["/chat"]

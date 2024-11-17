@@ -7,3 +7,4 @@
 - [ ] set up message timestamp
 - [ ] add authentication
 - [ ] Accept port info
+- [ ] Dockerise (add static files)
