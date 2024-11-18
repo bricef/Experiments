@@ -1,5 +1,7 @@
 # Web chat
 
+![](docs/img/screenshot.png)
+
 ## Todo
 
 - [x] Sanitise user input before dispatching (XSS)
