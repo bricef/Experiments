@@ -48,8 +48,10 @@ var namedata = {
   adjectives: ["bright", "wise", "silly"]
 };
 
+var host = window.location.host;
+
 // Udate namedata when possible
-fetch("http://localhost:1323/namedata.json")
+fetch(`http://${host}/namedata.json`)
     .then((e) => e.json())
     .then((nd) => {
       namedata = nd;
@@ -96,7 +98,7 @@ function setupRandomiseButton() {
 }
 
 window.addEventListener("DOMContentLoaded", (event) => {
-  let socket = new WebSocket("ws://localhost:1323/chatroom");
+  let socket = new WebSocket(`ws://${host}/chatroom`);
   
   setupNick(nick);
   setupSocketHandlers(socket);
