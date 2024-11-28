@@ -51,7 +51,7 @@ var namedata = {
 var host = window.location.host;
 
 // Udate namedata when possible
-fetch(`http://${host}/namedata.json`)
+fetch(`https://${host}/namedata.json`)
     .then((e) => e.json())
     .then((nd) => {
       namedata = nd;
@@ -98,7 +98,7 @@ function setupRandomiseButton() {
 }
 
 window.addEventListener("DOMContentLoaded", (event) => {
-  let socket = new WebSocket(`ws://${host}/chatroom`);
+  let socket = new WebSocket(`wss://${host}/chatroom`);
   
   setupNick(nick);
   setupSocketHandlers(socket);
