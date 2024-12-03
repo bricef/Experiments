@@ -1,0 +1,13 @@
+[package]
+name = "rust-fwd-auth"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+brotli = "7.0.0"
+compress = "0.2.1"
+cookie = { version = "0.18.1", features = ["secure"] }
+ntex = { version = "2.9.0", features = ["tokio"] }
+rust-embed = { version = "8.5.0", features = ["include-exclude", "compression"] }
