@@ -11,19 +11,49 @@ async fn hello() -> impl web::Responder {
         .body(d)
 }
 
-#[web::post("/echo")]
-async fn echo(req_body: String) -> impl web::Responder {
-    web::HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -> impl web::Responder {
-    web::HttpResponse::Ok().body("Hey there!")
-}
-
-
 #[derive(Embed)]
 #[folder = "static/"]
 struct Assets;
+
+#[web::get("/static/{filename:.*}")]
+async fn static_files(path: web::types::Path<String>) -> impl web::Responder {
+    let filepath = path.into_inner();
+    let file = Assets::get(&filepath).unwrap();
+    let bs = file.data.into_owned();
+    let d = std::str::from_utf8(&bs).unwrap().to_owned();
+    web::HttpResponse::Ok().body(d)
+}
+
+
+
+// use serde::Deserialize;
+
+// #[derive(Deserialize)]
+// struct Info {
+//     username: String,
+// }
+
+// /// deserialize `Info` from request's body
+// #[web::post("/submit")]
+// async fn submit(info: web::types::Json<Info>) -> Result<String, web::Error> {
+//     Ok(format!("Welcome {}!", info.username))
+// }
+
+
+// GET / -> /login
+// GET /login 
+// POST /login
+// GET /logout
+// POST /authz/fwdAuth
+// GET /health
+// GET /metrics
+// GET /ready
+// GET /info
+
+
+// Principal | Resource | Action 
+
+
 
 
 #[ntex::main]
@@ -31,8 +61,7 @@ async fn main() -> std::io::Result<()> {
     web::HttpServer::new(|| {
         web::App::new()
             .service(hello)
-            .service(echo)
-            .route("/hey", web::get().to(manual_hello))
+            .service(static_files)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

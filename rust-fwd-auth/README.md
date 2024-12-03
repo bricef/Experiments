@@ -9,7 +9,7 @@ Rust service to serve as Traefik fwd Auth
     - YAML File based backend
 - [ ] password hashing with [Argon2](https://docs.rs/argon2/latest/argon2/)
 - [ ] Set FwdAuth endpoint
-- [ ] Set up session management 
+- [ ] Set up session management
 - [ ] Set up login UI
 - [ ] Set up "authenticate" page
 - [ ] Allow config via cli args with [Clap](https://docs.rs/clap/latest/clap/) and config file with [clap-serde-derive](https://crates.io/crates/clap-serde-derive/)

@@ -4,15 +4,53 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-    <link rel="stylesheet" href="css/pico.min.css">
-    <title>Hello world!</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel="stylesheet" href="/static/custom.css">
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <title>Login Page</title>
+    <style>
+      .loginbox {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 3em;
+      }
+    </style>
   </head>
   <body>
     <main class="container">
-      <h1>Hello world!</h1>
+      <div class="loginbox">
+      <article style="min-width: 450px;">
+        <h1 style="text-align: center;">Login</h1>
+        <form>
+          <fieldset>
+            <label>
+              Email
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                autocomplete="email"
+              />
+            </label>
+            <label>
+              Password
+              <input
+                type="password"
+                name="password"
+              />
+            </label>
+          </fieldset>
+        
+          <div class="grid">
+            <button @click.prevent="resetpassword()" class="outline secondary">Reset</button>
+            <div></div>
+            <button @click.prevent="trylogin()">Login</button>
+          </div>
+        </form>
+        
+      </article>
+      </div>
     </main>
   </body>
 </html>
