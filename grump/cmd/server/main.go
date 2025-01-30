@@ -58,32 +58,32 @@ func main() {
 		Root("./templates").
 		Register([]string{".mustache", ".html"}, mustache).
 		Register([]string{".md"}, markdown).
-		Register([]string{".mdx"}, mdx).
-		Fallback(mustache)
+		Register([]string{".mdx"}, mdx)
+		// Fallback(mustache)
 
 	e.HTTPErrorHandler = func(err error, ctx echo.Context) {
 		code := http.StatusInternalServerError
 		if he, ok := err.(*echo.HTTPError); ok {
 			code = he.Code
-			ctx.Render(code, "pages/error", he)
+			ctx.Render(code, "pages/error.html", he)
 		} else {
 			e.Logger.Error(err)
-			ctx.Render(code, "pages/error", ErrorInfo{Code: http.StatusInternalServerError, Message: "Server encountered an internal error"})
+			ctx.Render(code, "pages/error.html", ErrorInfo{Code: http.StatusInternalServerError, Message: "Server encountered an internal error"})
 		}
 	}
 
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
+		return c.Render(http.StatusOK, "pages/index.md", interface{}(nil))
 	})
 	e.GET("/mustache", func(c echo.Context) error {
 		data := map[string]string{"c": "from mustache"}
-		return c.Render(http.StatusOK, "pages/mustache", data)
+		return c.Render(http.StatusOK, "pages/mustache.mustache", data)
 	})
 	e.GET("/simple", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "pages/simple", nil)
+		return c.Render(http.StatusOK, "pages/simple.mustache", nil)
 	})
 	e.GET("/date", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "partials/date", &DateInfo{time.Now()})
+		return c.Render(http.StatusOK, "partials/date.mustache", &DateInfo{time.Now()})
 	})
 	e.GET("/md", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "simple.md", nil)

@@ -82,10 +82,12 @@ func (r *MustacheRenderer) GetLayout(name string) (*mustache.Template, error) {
 }
 
 func (r *MustacheRenderer) Render(w io.Writer, name string, data interface{}, ctx echo.Context) error {
+
 	template, err := r.Get(name)
 	if err != nil {
 		return err
 	}
+
 	defaultLayout, err := r.GetLayout(r.config.DefaultLayout)
 	if err != nil {
 		err = template.FRender(w, data)

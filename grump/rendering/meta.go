@@ -1,6 +1,7 @@
 package rendering
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"path/filepath"
@@ -46,10 +47,18 @@ func (m *MetaRenderer) Root(path string) *MetaRenderer {
 
 func (m *MetaRenderer) GetRendererFor(name string) (echo.Renderer, error) {
 	ext := filepath.Ext(name)
+	if ext == "" {
+		// fmt.Printf("File does not have an extension\n")
+		return nil, echo.NewHTTPError(500, fmt.Sprintf("file '%v' did not have an extension ", name))
+	}
+
 	rc, ok := m.dispatch[ext]
 	if ok {
+		fmt.Printf("Found Renderer for ext %v\n", ext)
 		return rc, nil
 	}
+
+	fmt.Printf("No Renderer found for ext %v\n", ext)
 	if m.fallback != nil {
 		return m.fallback, nil
 	}
@@ -65,4 +74,27 @@ func (m *MetaRenderer) Render(w io.Writer, name string, data interface{}, ctx ec
 	}
 
 	return ir.Render(w, fullname, data, ctx)
+}
+
+type WrappedRenderer struct {
+	inner echo.Renderer
+	outer echo.Renderer
+}
+
+func (m *WrappedRenderer) Render(w io.Writer, name string, data interface{}, ctx echo.Context) error {
+	// Create a string writer
+	wi := bytes.NewBufferString("")
+	m.inner.Render(wi, name, data, ctx)
+	m.outer.Render(w, name, &interface{
+		content: wi.String();
+	}, ctx)
+
+	return nil
+}
+
+func Wrap(inner echo.Renderer, outer echo.Renderer) echo.Renderer {
+	return &WrappedRenderer{
+		inner: inner,
+		outer: outer,
+	}
 }
