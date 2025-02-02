@@ -13,6 +13,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 
 	m "github.com/cbroglie/mustache"
+	"maragu.dev/gomponents"
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 )
@@ -38,8 +39,16 @@ func Navbar() Node {
 			Li(A(Href("/"), Text("Home"))),
 			Li(A(Href("/contact"), Text("Contact"))),
 			Li(A(Href("/about"), Text("About"))),
+			Li(A(Href("/login"), Text("Login"))),
 		),
 	)
+}
+
+func RenderIn(templateFile string, c gomponents.Node) (string, error) {
+	w := bytes.NewBufferString("")
+	c.Render(w)
+	data := map[string]interface{}{"content": w.String()}
+	return m.RenderFile(templateFile, data)
 }
 
 func main() {
@@ -107,17 +116,11 @@ func main() {
 		return c.Render(http.StatusOK, "simple.mdx", nil)
 	})
 	e.GET("/gomponents", func(c echo.Context) error {
-		w := bytes.NewBufferString("")
-		Navbar().Render(w)
-		data := struct{ Content string }{Content: w.String()}
-
-		s, err := m.RenderFile("templates/layouts/default.html", data)
+		out, err := RenderIn("templates/layouts/default.html", Navbar())
 		if err != nil {
 			return err
 		}
-
-		return c.HTML(http.StatusOK, s)
-
+		return c.HTML(http.StatusOK, out)
 	})
 
 	e.Logger.Fatal(e.Start(":1323"))

@@ -54,7 +54,7 @@ func (m *MetaRenderer) GetRendererFor(name string) (echo.Renderer, error) {
 
 	rc, ok := m.dispatch[ext]
 	if ok {
-		fmt.Printf("Found Renderer for ext %v\n", ext)
+		//fmt.Printf("Found Renderer for ext %v\n", ext)
 		return rc, nil
 	}
 
