@@ -8,6 +8,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+var extensions = []string{"", ".mustache", ".stache", ".html"}
+
 type MustacheRendererConfig struct {
 	Caching       bool
 	Root          string
@@ -41,7 +43,7 @@ func (r *MustacheRenderer) Get(name string) (*mustache.Template, error) {
 
 	var err error
 
-	for _, ext := range []string{"", ".mustache", ".stache", ".html"} {
+	for _, ext := range extensions {
 		t, err := mustache.ParseFile(filepath.Join(r.config.Root, dir, filename+ext))
 
 		if err == nil {
@@ -67,7 +69,7 @@ func (r *MustacheRenderer) GetLayout(name string) (*mustache.Template, error) {
 
 	var err error
 
-	for _, ext := range []string{"", ".mustache", ".stache", ".html"} {
+	for _, ext := range extensions {
 		t, err := mustache.ParseFile(filepath.Join(r.config.Root, r.config.Layouts, dir, filename+ext))
 
 		if err == nil {

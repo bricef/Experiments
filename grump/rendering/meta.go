@@ -77,24 +77,29 @@ func (m *MetaRenderer) Render(w io.Writer, name string, data interface{}, ctx ec
 }
 
 type WrappedRenderer struct {
-	inner echo.Renderer
-	outer echo.Renderer
+	outerTemplate string
+	inner         echo.Renderer
+	outer         echo.Renderer
 }
 
 func (m *WrappedRenderer) Render(w io.Writer, name string, data interface{}, ctx echo.Context) error {
 	// Create a string writer
 	wi := bytes.NewBufferString("")
 	m.inner.Render(wi, name, data, ctx)
-	m.outer.Render(w, name, &interface{
-		content: wi.String();
+
+	wo := bytes.NewBufferString("")
+	m.outer.Render(wo, m.outerTemplate, struct{ Content string }{
+		Content: wi.String(),
 	}, ctx)
 
+	w.Write(wo.Bytes())
 	return nil
 }
 
-func Wrap(inner echo.Renderer, outer echo.Renderer) echo.Renderer {
+func Wrap(inner echo.Renderer, outer echo.Renderer, outerTemplate string) echo.Renderer {
 	return &WrappedRenderer{
-		inner: inner,
-		outer: outer,
+		outerTemplate: outerTemplate,
+		inner:         inner,
+		outer:         outer,
 	}
 }

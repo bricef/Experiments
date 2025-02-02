@@ -1,4 +1,3 @@
-
 # Index
 
 - [Mustache Example](/mustache)
@@ -6,3 +5,4 @@
 - [Date partial rendering](/date)
 - [Markdown Example](/md)
 - [MDX Example](/mdx)
+- [Gomponent example](/gomponents)

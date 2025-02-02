@@ -10,7 +10,12 @@
 
 <body>
     <main class="container">
+        {{#content}}
         {{{content}}}
+        {{/content}}
+        {{^content}}
+        {{{Content}}}
+        {{/content}}
     </main>
 </body>
 

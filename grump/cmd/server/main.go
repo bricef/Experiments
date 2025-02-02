@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"net/http"
 	"os"
 	"time"
@@ -10,6 +11,10 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+
+	m "github.com/cbroglie/mustache"
+	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/html"
 )
 
 type LoginPage struct {
@@ -25,6 +30,16 @@ type ErrorInfo struct {
 
 type DateInfo struct {
 	Date time.Time
+}
+
+func Navbar() Node {
+	return Nav(Class("navbar"),
+		Ol(
+			Li(A(Href("/"), Text("Home"))),
+			Li(A(Href("/contact"), Text("Contact"))),
+			Li(A(Href("/about"), Text("About"))),
+		),
+	)
 }
 
 func main() {
@@ -57,8 +72,8 @@ func main() {
 	e.Renderer = rendering.NewMetaRenderer().
 		Root("./templates").
 		Register([]string{".mustache", ".html"}, mustache).
-		Register([]string{".md"}, markdown).
-		Register([]string{".mdx"}, mdx)
+		Register([]string{".md"}, rendering.Wrap(markdown, mustache, "templates/layouts/default.html")).
+		Register([]string{".mdx"}, rendering.Wrap(mdx, mustache, "templates/layouts/default.html"))
 		// Fallback(mustache)
 
 	e.HTTPErrorHandler = func(err error, ctx echo.Context) {
@@ -73,7 +88,7 @@ func main() {
 	}
 
 	e.GET("/", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "pages/index.md", interface{}(nil))
+		return c.Render(http.StatusOK, "pages/index.md", nil)
 	})
 	e.GET("/mustache", func(c echo.Context) error {
 		data := map[string]string{"c": "from mustache"}
@@ -90,6 +105,19 @@ func main() {
 	})
 	e.GET("/mdx", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "simple.mdx", nil)
+	})
+	e.GET("/gomponents", func(c echo.Context) error {
+		w := bytes.NewBufferString("")
+		Navbar().Render(w)
+		data := struct{ Content string }{Content: w.String()}
+
+		s, err := m.RenderFile("templates/layouts/default.html", data)
+		if err != nil {
+			return err
+		}
+
+		return c.HTML(http.StatusOK, s)
+
 	})
 
 	e.Logger.Fatal(e.Start(":1323"))
