@@ -9,9 +9,7 @@
   <title>Chat Example</title>
 </head>
 
-
 <body>
-  
   <div class="container">
     <nav>
       <ul>
@@ -19,34 +17,60 @@
       </ul>
       <ul>
         <li>
-          
-            <fieldset role="group">
-              <input type="submit" value="Nick is" />
-              <input type="text" name="nick" id="nick" placeholder="">
-              <button id="randomise">♺</button>
-            </fieldset>
-          
+          <fieldset role="group">
+            <input type="submit" value="Nick is" />
+            <input type="text" name="nick" id="nick" placeholder="">
+            <button id="randomise">♺</button>
+          </fieldset>
         </li>
       </ul>
     </nav>
 
-    <div>
-      
-      <article>
+    <div class="grid" style="grid-template-columns: 1fr 5fr;">
+      <div>
+        <article>
+          <header>
+            <hgroup>
+              <h2>Channels</h2>
+              <h3>Available chat rooms</h3>
+            </hgroup>
+          </header>
+          <div id="channels" class="overflow-auto" style="max-height: 300px;">
+            <ul>
+              <li><a href="#" data-channel="general">#general</a></li>
+            </ul>
+          </div>
+          <footer>
+            <form id="newchannel">
+              <fieldset role="group">
+                <input type="text" name="channel" id="channel" placeholder="New channel name">
+                <input type="submit" value="Create" />
+              </fieldset>
+            </form>
+          </footer>
+        </article>
+      </div>
 
-        <div id="chat" class="overflow-auto" style="max-height: 300px;">
-        </div>
-        
-        <footer>
-          <form id="messagesend">
-            <fieldset role="group">
-              <input type="text" name="message" id="message" placeholder="message">
-              <input type="submit" value="Send" />
-            </fieldset>
-          </form>
-        </footer>
-
-      </article>
+      <div>
+        <article>
+          <header>
+            <hgroup>
+              <h2 id="current-channel">#general</h2>
+              <h3>Chat messages</h3>
+            </hgroup>
+          </header>
+          <div id="chat" class="overflow-auto" style="max-height: 300px;">
+          </div>
+          <footer>
+            <form id="messagesend">
+              <fieldset role="group">
+                <input type="text" name="message" id="message" placeholder="message">
+                <input type="submit" value="Send" />
+              </fieldset>
+            </form>
+          </footer>
+        </article>
+      </div>
     </div>
   </div>
 </body>

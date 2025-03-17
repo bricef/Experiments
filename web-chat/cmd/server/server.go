@@ -1,6 +1,9 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+
 	"github.com/bricef/Experiments/web-chat/chatroom"
 
 	"github.com/gorilla/sessions"
@@ -12,9 +15,11 @@ import (
 
 var (
 	upgrader = websocket.Upgrader{}
+	debug    = flag.Bool("debug", false, "Run in debug mode (no SSL)")
 )
 
 func main() {
+	flag.Parse()
 	dispatcher := chatroom.NewDispatcher()
 
 	e := echo.New()
@@ -25,13 +30,18 @@ func main() {
 	e.Static("/", "./public")
 
 	e.GET("/chatroom", func(c echo.Context) error {
+		channel := c.QueryParam("channel")
+		if channel == "" {
+			channel = "general" // Default channel
+		}
+
 		// upgrade the connection to a websocket
 		ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
 		if err != nil {
 			return err
 		}
 		// add the client to the dispatcher
-		return dispatcher.AddClient(chatroom.NewClient(ws))
+		return dispatcher.AddClient(chatroom.NewClient(ws), channel)
 	})
 
 	// go func() {
@@ -44,5 +54,13 @@ func main() {
 	// 	}
 	// }()
 
-	e.Logger.Fatal(e.Start(":1323"))
+	// Set the protocol based on debug mode
+	protocol := "https"
+	if *debug {
+		protocol = "http"
+	}
+
+	addr := ":1323"
+	e.Logger.Info(fmt.Sprintf("Starting server in %s mode on %s", protocol, addr))
+	e.Logger.Fatal(e.Start(addr))
 }
