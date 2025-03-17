@@ -33,7 +33,30 @@
     <div>
       <div class="grid" style="grid-template-columns: 1fr 4fr;">
         <article id="channels">
-          
+          <div id="channels-container">
+            <h3>Channels</h3>
+            
+            <!-- Channel List -->
+            <div id="channels">
+              <ul></ul>
+            </div>
+            
+            <!-- New Channel Form -->
+            <form id="newchannel" class="channel-form">
+              <div class="input-group">
+                <input 
+                  type="text" 
+                  id="channel" 
+                  name="channel" 
+                  placeholder="New channel name"
+                  pattern="[a-zA-Z0-9-]+"
+                  title="Only letters, numbers, and hyphens allowed"
+                  required
+                >
+                <button type="submit">Create</button>
+              </div>
+            </form>
+          </div>
         </article>  
 
         <article>
@@ -54,6 +77,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Add some CSS for styling -->
+  
 </body>
 
 </html>

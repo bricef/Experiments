@@ -18,10 +18,12 @@ class URLConfig {
 const URL = new URLConfig();
 
 class ChatClient {
-  constructor(nick) {
+  constructor() {
+    this.urlConfig = new URLConfig();
     this.currentChannel = "general";
     this.socket = null;
-    this.nick = nick;
+    this.nick = randomName(namedata);
+    this.channels = new Set(["general"]); // Track available channels
   }
 
   setNick(newNick) {
@@ -69,6 +71,94 @@ class ChatClient {
     });
   }
 
+  updateChannelsList() {
+    fetch(this.urlConfig.getHTTPURL('/channels'))
+      .then(response => response.json())
+      .then(channels => {
+        this.channels = new Set(channels); // Update channels set
+        this.renderChannelsList();
+      })
+      .catch(error => console.error('Error fetching channels:', error));
+  }
+
+  renderChannelsList() {
+    const channelsList = document.getElementById('channels').querySelector('ul');
+    channelsList.innerHTML = '';
+    
+    const fragment = document.createDocumentFragment();
+    
+    // Always show general channel first
+    fragment.appendChild(this.createChannelListItem("general"));
+    
+    // Add other channels sorted alphabetically
+    Array.from(this.channels)
+      .filter(channel => channel !== "general")
+      .sort()
+      .forEach(channel => {
+        fragment.appendChild(this.createChannelListItem(channel));
+      });
+    
+    channelsList.appendChild(fragment);
+  }
+
+  createChannelListItem(channel) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    
+    a.href = '#';
+    a.textContent = `#${channel}`;
+    a.dataset.channel = channel;
+    
+    // Highlight current channel
+    if (channel === this.currentChannel) {
+      a.classList.add('active-channel');
+    }
+    
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (channel !== this.currentChannel) {
+        this.switchChannel(channel);
+      }
+    });
+    
+    li.appendChild(a);
+    return li;
+  }
+
+  switchChannel(channel) {
+    const oldChannel = this.currentChannel;
+    this.currentChannel = channel;
+    
+    // Update UI
+    document.getElementById('current-channel').textContent = `#${channel}`;
+    document.getElementById('chat').innerHTML = '';
+    this.renderChannelsList(); // Re-render to update active channel
+    
+    // Send channel switch message if socket is open
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.send(JSON.stringify({
+        type: 'system',
+        content: 'switch_channel',
+        channel: channel
+      }));
+    }
+
+    // Dispatch custom event for channel switch
+    window.dispatchEvent(new CustomEvent('channelSwitch', {
+      detail: { oldChannel, newChannel: channel }
+    }));
+  }
+
+  // Add method to create a new channel
+  createChannel(channelName) {
+    channelName = channelName.toLowerCase().trim();
+    if (!channelName) return;
+    
+    if (!this.channels.has(channelName)) {
+      this.channels.add(channelName);
+      this.switchChannel(channelName);
+    }
+  }
 }
 
 function choose(arr){
@@ -98,8 +188,6 @@ function randomName(namedata){
   return adjective + animal + number;
 }
 
-
-
 function setupNick(cb, nick) {
   nickfield = document.getElementById('nick')
   nickfield.addEventListener('input', (e) => {
@@ -119,9 +207,24 @@ function setupRandomizeButton(cb) {
   });
 }
 
+function setupNewChannelForm(chatClient) {
+  const form = document.getElementById('newchannel');
+  const input = document.getElementById('channel');
+  
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const channelName = input.value.trim();
+    if (channelName) {
+      chatClient.createChannel(channelName);
+      input.value = '';
+    }
+  });
+}
+
+
 window.addEventListener("DOMContentLoaded", (event) => {
   let nick = randomName(namedata);
-  const chatClient = new ChatClient(nick);
+  const chatClient = new ChatClient();
 
   setupNick((newNick) => chatClient.setNick(newNick), nick);
   setupRandomizeButton((newNick) => chatClient.setNick(newNick));
