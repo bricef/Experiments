@@ -31,22 +31,27 @@
     </nav>
 
     <div>
-      
-      <article>
+      <div class="grid" style="grid-template-columns: 1fr 4fr;">
+        <article id="channels">
+          
+        </article>  
 
-        <div id="chat" class="overflow-auto" style="max-height: 300px;">
-        </div>
-        
-        <footer>
-          <form id="messagesend">
-            <fieldset role="group">
-              <input type="text" name="message" id="message" placeholder="message">
-              <input type="submit" value="Send" />
-            </fieldset>
-          </form>
-        </footer>
+        <article>
+          <h3 id="current-channel-name">{{Channel Name}}</h3>
 
-      </article>
+          <div id="chat" class="overflow-auto" style="max-height: 300px;">
+          </div>
+          
+          <footer>
+            <form id="messagesend">
+              <fieldset role="group">
+                <input type="text" name="message" id="message" placeholder="message">
+                <input type="submit" value="Send" />
+              </fieldset>
+            </form>
+          </footer>
+        </article>
+      </div>
     </div>
   </div>
 </body>

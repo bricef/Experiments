@@ -1,42 +1,74 @@
-
-
-
-function setupSocketHandlers(socket){
-  socket.onopen = e => console.log("[open] Connection established");
-
-  socket.onmessage = e => {
-    let data = JSON.parse(e.data);
-    let chat = document.getElementById('chat');
-    chat.innerHTML += `<p><strong>${data.nick}</strong>: ${data.content}</p>`;
-    chat.scrollTop = chat.scrollHeight;
+class URLConfig {
+  constructor() {
+    this.isDebug = window.location.protocol === 'http:';
+    this.host = window.location.host;
+    this.wsProtocol = this.isDebug ? 'ws' : 'wss';
+    this.httpProtocol = this.isDebug ? 'http' : 'https';
   }
 
+  getWS(path) {
+    return `${this.wsProtocol}://${this.host}${path}`;
+  }
 
-  socket.onclose = function(event) {
-    if (event.wasClean) {
-      console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-    } else {
-      console.log('[close] Connection died');
-    }
-  };
-
-  socket.onerror = function(error) {
-    console.log(`[error]: ${error.message}`);
-  };
+  getHTTP(path) {
+    return `${this.httpProtocol}://${this.host}${path}`;
+  }
 }
 
+const URL = new URLConfig();
 
+class ChatClient {
+  constructor(nick) {
+    this.currentChannel = "general";
+    this.socket = null;
+    this.nick = nick;
+  }
 
+  setNick(newNick) {
+    this.nick = newNick;
+  }
 
-function setupMessageForm(socket){
-  let form = document.getElementById('messagesend');
-  let message = document.getElementById('message');
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    // console.log(`Sending message ${message.value}`);
-    socket.send(JSON.stringify({nick: nick, content: message.value}));
-    message.value = '';
-  });
+  connect() {
+    const wsURL = URL.getWS(`/chatroom?channel=general`);
+    this.socket = new WebSocket(wsURL);
+    this.setupSocketHandlers();
+    this.setupMessageForm();
+  }
+
+  setupSocketHandlers() {
+    this.socket.onopen = e => console.log("[open] Connection established");
+
+    this.socket.onmessage = e => {
+      let data = JSON.parse(e.data);
+      let chat = document.getElementById('chat');
+      chat.innerHTML += `<p><strong>${data.nick}</strong>: ${data.content}</p>`;
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    this.socket.onclose = function(event) {
+      if (event.wasClean) {
+        console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+      } else {
+        console.log('[close] Connection died');
+      }
+    };
+
+    this.socket.onerror = function(error) {
+      console.log(`[error]: ${error.message}`);
+    };
+  }
+
+  setupMessageForm() {
+    let form = document.getElementById('messagesend');
+    let message = document.getElementById('message');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // console.log(`Sending message ${message.value}`);
+      this.socket.send(JSON.stringify({nick: this.nick, content: message.value}));
+      message.value = '';
+    });
+  }
+
 }
 
 function choose(arr){
@@ -48,14 +80,12 @@ var namedata = {
   adjectives: ["bright", "wise", "silly"]
 };
 
-var host = window.location.host;
-
-// Udate namedata when possible
-fetch(`https://${host}/namedata.json`)
-    .then((e) => e.json())
-    .then((nd) => {
-      namedata = nd;
-    })
+fetch(URL.getHTTP('/namedata.json'))
+  .then((e) => e.json())
+  .then((nd) => {
+    namedata = nd;
+  })
+  .catch(error => console.error('Error fetching namedata:', error));
 
 function capitalizeFirstLetter(val) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
@@ -68,29 +98,21 @@ function randomName(namedata){
   return adjective + animal + number;
 }
 
-let nick = randomName(namedata);
 
-function setNick(newNick){
-  if (newNick === "") {
-    nick = "Anon";
-  }else{
-    nick = newNick;
-  }
-}
 
-function setupNick(nick){
+function setupNick(cb, nick) {
   nickfield = document.getElementById('nick')
   nickfield.addEventListener('input', (e) => {
-    setNick(e.target.value);
+    cb(e.target.value);
   });
   nickfield.placeholder = nick;
 }
 
-function setupRandomiseButton() {
+function setupRandomizeButton(cb) {
   let button = document.getElementById('randomise');
   button.addEventListener('click', (e) => {
     let nick = randomName(namedata); 
-    setNick(nick);
+    cb(nick);
     nickfield = document.getElementById('nick')
     nickfield.value = nick;
     nickfield.placeholder = nick;
@@ -98,10 +120,12 @@ function setupRandomiseButton() {
 }
 
 window.addEventListener("DOMContentLoaded", (event) => {
-  let socket = new WebSocket(`wss://${host}/chatroom`);
+  let nick = randomName(namedata);
+  const chatClient = new ChatClient(nick);
+
+  setupNick((newNick) => chatClient.setNick(newNick), nick);
+  setupRandomizeButton((newNick) => chatClient.setNick(newNick));
   
-  setupNick(nick);
-  setupSocketHandlers(socket);
-  setupMessageForm(socket);
-  setupRandomiseButton();
+  setupNewChannelForm(chatClient);
+  chatClient.connect();
 });
