@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/bricef/Experiments/web-chat/chatroom"
 
 	"github.com/gorilla/sessions"
@@ -32,6 +34,10 @@ func main() {
 		}
 		// add the client to the dispatcher
 		return dispatcher.AddClient(chatroom.NewClient(ws))
+	})
+
+	e.GET("/channels", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, dispatcher.GetChannels())
 	})
 
 	// go func() {

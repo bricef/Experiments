@@ -72,7 +72,7 @@ class ChatClient {
   }
 
   updateChannelsList() {
-    fetch(this.urlConfig.getHTTPURL('/channels'))
+    fetch(this.urlConfig.getHTTP('/channels'))
       .then(response => response.json())
       .then(channels => {
         this.channels = new Set(channels); // Update channels set
@@ -130,7 +130,7 @@ class ChatClient {
     this.currentChannel = channel;
     
     // Update UI
-    document.getElementById('current-channel').textContent = `#${channel}`;
+    document.getElementById('current-channel-name').textContent = `#${channel}`;
     document.getElementById('chat').innerHTML = '';
     this.renderChannelsList(); // Re-render to update active channel
     
@@ -156,8 +156,8 @@ class ChatClient {
     
     if (!this.channels.has(channelName)) {
       this.channels.add(channelName);
-      this.switchChannel(channelName);
     }
+    this.switchChannel(channelName);
   }
 }
 
@@ -213,6 +213,7 @@ function setupNewChannelForm(chatClient) {
   
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+    e.stopPropagation();
     const channelName = input.value.trim();
     if (channelName) {
       chatClient.createChannel(channelName);
@@ -223,6 +224,7 @@ function setupNewChannelForm(chatClient) {
 
 
 window.addEventListener("DOMContentLoaded", (event) => {
+  console.log("DOMContentLoaded");
   let nick = randomName(namedata);
   const chatClient = new ChatClient();
 
@@ -230,5 +232,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
   setupRandomizeButton((newNick) => chatClient.setNick(newNick));
   
   setupNewChannelForm(chatClient);
+  const channelname = document.getElementById('current-channel-name');
+  channelname.textContent = `#${chatClient.currentChannel}`;
+  
+  chatClient.updateChannelsList();
   chatClient.connect();
 });
