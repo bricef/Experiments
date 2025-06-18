@@ -15,4 +15,5 @@ Random code experiements and half-finished ideas. Consider all code in this repo
 - [C vs C++ Hashtables](./c-vs-cpp/)
 - [Futures in plain C](./libfutures/)
 - [Simple web chat](./web-chat/) 
+- [Multimodal AI](./multimodal-ai)
 
