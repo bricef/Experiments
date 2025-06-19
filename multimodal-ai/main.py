@@ -1,13 +1,18 @@
 
 import dspy
-
+import warnings
 
 
 def main():
-    lm = dspy.LM('openai/gpt-4o-mini')
-    dspy.configure(lm=lm)
+    with warnings.catch_warnings(record=True) as caught_warnings:
 
-    print(lm("Hello, how are you?")[0])
+        lm = dspy.LM('openai/gpt-4o-mini')
+        dspy.configure(lm=lm)
+
+        print(lm("Please provide an outline for a game deisgn document.")[0])
+    
+    print(f"\n {len(caught_warnings)} warnings caught.") 
+
 
 if __name__ == "__main__":
     main()
