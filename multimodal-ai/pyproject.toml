@@ -5,11 +5,27 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "accelerate>=1.8.1",
+    "bitsandbytes>=0.47.0.dev0",
     "datasets>=3.6.0",
+    "diffusers>=0.34.0",
     "dspy>=2.6.27",
+    "imageio>=2.37.0",
+    "imageio-ffmpeg>=0.6.0",
     "ipykernel>=6.29.5",
     "jupyter>=1.1.1",
+    "litellm>=1.72.6.post1",
     "matplotlib>=3.10.3",
+    "openai>=1.88.0",
+    "opencv-python>=4.12.0.88",
     "plotly>=6.1.2",
     "pydantic>=2.11.7",
+    "seaborn>=0.13.2",
+    "shiny>=1.4.0",
+    "torch>=2.7.1",
+    "torchvision>=0.22.1",
+    "transformers>=4.53.1",
 ]
+
+[tool.uv.sources]
+bitsandbytes = { git = "https://github.com/yhsung/bitsandbytes.git" }

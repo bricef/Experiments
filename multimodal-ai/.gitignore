@@ -1,1 +1,4 @@
 .envrc
+out/
+www/
+__pycache__/

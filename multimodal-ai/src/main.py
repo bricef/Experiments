@@ -14,7 +14,6 @@ def main():
     
     print(f"\n {len(caught_warnings)} warnings caught.") 
 
-
 if __name__ == "__main__":
     main()
 
