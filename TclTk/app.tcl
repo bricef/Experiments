@@ -1,9 +1,8 @@
 #!/usr/bin/env tclsh
 
-# Modern Tcl/Tk Feet to Meters Converter
-# Compatible with Tcl 9.0+
+package provide converter 0.1
 
-package require Tk 9.0
+package require Tk
 
 # Source the conversion module
 source [file join [file dirname [info script]] conversion.tcl]
