@@ -30,11 +30,11 @@ penguins = ui.layout_sidebar(
 ai = [
     ui.page_fluid(
         ui.markdown("## AI"),
-        ui.card(
-            ui.input_text_area("prompt", "Your AI prompt"),
-            ui.input_action_button("generate", "Generate", class_="btn-success", width="300px"),
-        ),
         ui.layout_columns(
+            ui.column(6, ui.card(
+                ui.input_text_area("prompt", "Your AI prompt"),
+                ui.input_action_button("generate", "Generate", class_="btn-success"),
+            )),
             ui.column(6, ui.output_image("image")),
             ui.column(6, ui.output_ui("video")),
         ),
